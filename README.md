@@ -1,2 +1,2 @@
-# Adomanygyujtotabla
-Social Swipe
+# Trial Creater, Controller Library
+
