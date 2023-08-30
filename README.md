@@ -1,0 +1,2 @@
+# Adomanygyujtotabla
+Social Swipe
