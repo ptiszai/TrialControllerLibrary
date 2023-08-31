@@ -1,12 +1,7 @@
 ﻿using System;
 using Microsoft.Win32;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
-using System.Runtime.Remoting.Messaging;
 
 //https://learn.microsoft.com/en-us/dotnet/api/microsoft.win32.registry?view=net-7.0
 //https://learn.microsoft.com/en-us/dotnet/api/microsoft.win32.registrykey.deletesubkey?view=net-7.0
@@ -43,16 +38,6 @@ namespace TrialControllerLibrary
                 if (trialDays <= 0) {
                     return true;
                 }
-                int startdt = 0;
-                int enddt = 0;
-                if (currentDate) {
-                    startdt = GetHoursFromUnix1970();                    
-                }
-                else
-                {
-                    startdt = GetHoursFromUnix1970(year, months, days, hours);
-                }
-                enddt = startdt + trialDays;
                 if (Registry.GetValue(keyName, ds, null) == null)
                 { // not exist
                     if (subkey.Count() > 0)
@@ -62,16 +47,35 @@ namespace TrialControllerLibrary
                         regName.CreateSubKey(de);
                         regName.CreateSubKey(tn);
                     }
+                    SetDsDeTn(trialDays, currentDate, year, months, days, hours);
                 }
-                Registry.SetValue(keyName, ds, startdt);
-                Registry.SetValue(keyName, de, enddt);
-                Registry.SetValue(keyName, tn, trialDays);
             }
             catch (Exception ex) {
                 Trace.WriteLine($"Create: {ex.Message}");
                 return false;
             }
             return true;
+        }
+
+        public void SetDsDeTn(int trialDays, bool currentDate = true, int year = 0, int months = 0, int days = 0, int hours = 0)
+        {
+            if (Registry.GetValue(keyName, ds, null) == null)
+            {
+                int startdt = 0;
+                int enddt = 0;
+                if (currentDate)
+                {
+                    startdt = GetHoursFromUnix1970();
+                }
+                else
+                {
+                    startdt = GetHoursFromUnix1970(year, months, days, hours);
+                }
+                Registry.SetValue(keyName, ds, startdt);
+                enddt = startdt + trialDays;
+                Registry.SetValue(keyName, de, enddt);
+                Registry.SetValue(keyName, tn, trialDays);               
+            }
         }
 
         public void Delete()
@@ -95,15 +99,14 @@ namespace TrialControllerLibrary
             {
                 return -1;
             }
-            int _ds_value = (int)Registry.GetValue(keyName, ds, null);
-            //int _ds = Int32.Parse(_ds_value);
-            int _de_value = (int)Registry.GetValue(keyName, de, null);
-            // int _de = Int32.Parse(_de_value);
-            return (_de_value - _ds_value);
+            int currentdt = GetHoursFromUnix1970();
+            int _ds_value = (int)Registry.GetValue(keyName, ds, null);        
+            int _de_value = (int)Registry.GetValue(keyName, de, null);            
+            return (_de_value - currentdt);
         }
-        // #endregion
+        #endregion
 
-        // #region privet functions
+        #region privet functions
         private int GetHoursFromUnix1970(int year, int months, int days, int hours)
         {
             DateTime _unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
