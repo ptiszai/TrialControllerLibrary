@@ -21,8 +21,8 @@ namespace Example
             // user date + trial days
                 Console.WriteLine("#Example 2.: Created was SUCCESS");
             }*/
-
-            Console.WriteLine($"Trial numbers of day {trialClass.IsTrial()}");
+            // if trial number -1, there is no trial mode.
+            Console.WriteLine($"Trial numbers of day {trialClass.IsTrial()}"); 
             //trialClass.Delete(); // delete trial mode, and commented is trialClass.Create(...) function.
 
             Console.WriteLine($"EXIT Escape key press!");            

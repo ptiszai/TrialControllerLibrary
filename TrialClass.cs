@@ -99,10 +99,16 @@ namespace TrialControllerLibrary
             {
                 return -1;
             }
+            if ((int)Registry.GetValue(keyName, tn, null) == -1)
+            {
+                return -1;
+            }
             int currentdt = GetHoursFromUnix1970();
             int _ds_value = (int)Registry.GetValue(keyName, ds, null);        
-            int _de_value = (int)Registry.GetValue(keyName, de, null);            
-            return (_de_value - currentdt);
+            int _de_value = (int)Registry.GetValue(keyName, de, null);
+            int _result = _de_value - currentdt;
+            _result = (_result < 0) ? 0: _result;
+            return _result;
         }
         #endregion
 
